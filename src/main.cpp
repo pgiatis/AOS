@@ -24,7 +24,7 @@ Location        Description
 #include <WiFi.h>
 #include <HTTPClient.h>
 #include <esp_wifi.h>
-//#include <Wire.h>												  // Include WIRE library for handling I2C communications
+#include "echoData.h"
 
 AsyncWebServer server(80);
 
@@ -49,29 +49,25 @@ byte valid = 0;														 //check to see if something is valid
 
 void spaces() 
 {
-  Serial.println('\n');
+  SerialPrintln("");
 }
 
 void serial_menu() 
 {
   spaces();
-  Serial.println("***********************************");
-  Serial.println("********** AOS Commands ***********");
-  Serial.println("***********************************");
-  Serial.println("?     = This menu");
-  Serial.println("RE    = Read EEPROM");
-  Serial.println("WE    = Write EEPROM");
-  Serial.println("SB    = Set Baud Rate");
-  Serial.println("TP    = Toggle Pin");
-  Serial.println("PWM   = Pulse width module Pin");
-  Serial.println("RA    = Read ADC Channel");
-  Serial.println("RP    = Read Pin");
-  Serial.println("DSD   = Directory SD Card");
-  Serial.println("RSD   = Read SD Card");
-  Serial.println("WSD   = Write SD Card");
-  Serial.println("ESD   = Erase SD Card File");
-  Serial.println("SI    = System information");
-  Serial.println("RESET = Reset Microcontroller");
+  SerialPrintln("***********************************");
+  SerialPrintln("********** AOS Commands ***********");
+  SerialPrintln("***********************************");
+  SerialPrintln("?     = This menu");
+  SerialPrintln("RE    = Read EEPROM");
+  SerialPrintln("WE    = Write EEPROM");
+  SerialPrintln("SB    = Set Baud Rate");
+  SerialPrintln("TP    = Toggle Pin");
+  SerialPrintln("PWM   = Pulse width modulate Pin");
+  SerialPrintln("RA    = Read ADC Channel");
+  SerialPrintln("RP    = Read Pin");
+  SerialPrintln("SI    = System information");
+  SerialPrintln("RESET = Reset Microcontroller");
   spaces();
   flag = 1;
 }
@@ -104,7 +100,7 @@ void serial_accum()
 void reset_serial() 
 {
   inputString = "";
-  Serial.print(prompt);
+  SerialPrint(prompt);
   stringComplete = false;
 }
 
@@ -137,11 +133,13 @@ void read_pin()
   byte done = 0;
   reset_serial_no_prompt();
   spaces();
-  Serial.write("Please Select Pin To Read:");
+  SerialPrint("Please Select Pin To Read:");
   inputString_module();
   int value = inputString.toInt();
   value = digitalRead(value);
-  Serial.print("Read: "); Serial.println(value); Serial.println();
+  SerialPrint("Read: "); 
+  SerialPrintln(String(value)); 
+  SerialPrintln("");
   reset_serial_no_prompt();
   flag = 1;
 }
@@ -151,13 +149,13 @@ void read_adc()
   byte done = 0;
   reset_serial_no_prompt();
   spaces();
-  Serial.write("Please Select ADC Channel To Read:");
+  SerialPrint("Please Select ADC Channel To Read:");
   inputString_module();
   int sensorValue = analogRead(inputString.toInt());
   float voltage = sensorValue * (5.0 / 1023.0);
-  Serial.print("ADC Value Read: "); Serial.print(sensorValue);
-  Serial.print(" Converted to Voltage: "); Serial.println(voltage);
-  Serial.println();
+  SerialPrint("ADC Value Read: "); SerialPrint(String(sensorValue));
+  SerialPrint(" Converted to Voltage: "); SerialPrintln(String(voltage, 2));
+  SerialPrintln("");
   reset_serial_no_prompt();
   flag = 1;
 }
@@ -168,14 +166,14 @@ void pwm_pin()
   byte state = 0;
   reset_serial_no_prompt();
   spaces();
-  Serial.write("Please Select Pin To PWM:");
+  SerialPrint("Please Select Pin To PWM:");
   inputString_module();
   inputString.toLowerCase();
   pin = inputString.toInt();
 
   reset_serial_no_prompt();
   spaces();
-  Serial.write("Please enter duty cycle (0-255):");
+  SerialPrint("Please enter duty cycle (0-255):");
   inputString_module();
   inputString.toLowerCase();
   state = inputString.toInt();
@@ -190,21 +188,21 @@ void toggle_pin()
   byte pin = 0;
   byte state = 0;
   reset_serial_no_prompt();
-  Serial.println("");
-  Serial.write("Please Select Pin To Toggle:");
+  SerialPrintln("");
+  SerialPrint("Please Select Pin To Toggle:");
   inputString_module();
   inputString.toLowerCase();
   pin = inputString.toInt();
 
   reset_serial_no_prompt();
-  Serial.println("");
-  Serial.write("Please enter 1 for High or 0 for Low:");
+  SerialPrintln("");
+  SerialPrint("Please enter 1 for High or 0 for Low:");
   inputString_module();
   inputString.toLowerCase();
   state = inputString.toInt();
 
   digitalWrite(pin, state);
-  Serial.println("");
+  SerialPrint("");
   reset_serial_no_prompt();
   flag = 1;
 }
@@ -213,25 +211,25 @@ void set_baud()
 {
   byte check = 0;
   reset_serial_no_prompt();
-  Serial.println(" ");
-  Serial.println("1) 1200");
-  Serial.println("2) 2400");
-  Serial.println("3) 4800");
-  Serial.println("4) 9600");
-  Serial.println("5) 14400");
-  Serial.println("6) 19200");
-  Serial.println("7) 38400");
-  Serial.println("8) 115200");
-  Serial.println("");
-  Serial.write("Please select(1-8):");
+  SerialPrintln("");
+  SerialPrintln("1) 1200");
+  SerialPrintln("2) 2400");
+  SerialPrintln("3) 4800");
+  SerialPrintln("4) 9600");
+  SerialPrintln("5) 14400");
+  SerialPrintln("6) 19200");
+  SerialPrintln("7) 38400");
+  SerialPrintln("8) 115200");
+  SerialPrintln("");
+  SerialPrint("Please select(1-8):");
   while (check < 1) 
   {
     inputString_module();
     inputString.toLowerCase();
     if (inputString.toInt() < 1 || inputString.toInt() > 8) 
     {
-      Serial.println("Invalid selection");
-      Serial.write("Please select(1-8):");
+      SerialPrintln("Invalid selection");
+      SerialPrint("Please select(1-8):");
       check = 0;
       reset_serial_no_prompt();
     } 
@@ -252,7 +250,7 @@ void set_baud()
     case 7: baud = 38400; break;
     case 8: baud = 115200; break;
   }
-  Serial.println();
+  SerialPrintln("");
   reset_serial_no_prompt();
   flag = 1;
 }
@@ -264,52 +262,58 @@ void write_eprom()
   int ADDRESS = 0;
   byte VAL = 0;
   reset_serial_no_prompt();
-  Serial.println("");
-  Serial.write("EEPROM Address:");
+  SerialPrintln("");
+  SerialPrint("EEPROM Address:");
   inputString_module();
   inputString.toLowerCase();
   ADDRESS = inputString.toInt();
   reset_serial_no_prompt();
 
-  Serial.println();
-  Serial.write("EEPROM Value:");
+  SerialPrintln("");
+  SerialPrint("EEPROM Value:");
   inputString_module();
   inputString.toLowerCase();
   VAL = inputString.toInt();
 
   EEPROM.write(ADDRESS, VAL);
-  Serial.println("");
+  SerialPrintln("");
   reset_serial_no_prompt();
   flag = 1;
 }
 
 void eprom_all() 
 {
-  Serial.println(); Serial.println("Reading ALL");
+  SerialPrintln(""); 
+  SerialPrintln("Reading ALL");
   byte VAL;
   for (int i = 0; i <= 4096; i++) 
   {
     VAL = EEPROM.read(i);
-    Serial.print("EEPROM Address: "); Serial.print(i); Serial.print("\t"); Serial.print("Value: "); Serial.print(VAL); Serial.println();
+    SerialPrint("EEPROM Address: "); 
+    SerialPrint(String(i)); 
+    SerialPrint("\t"); 
+    SerialPrint("Value: "); 
+    SerialPrint(String(VAL)); 
+    SerialPrintln("");
     delay(100);
   }
-  Serial.println();
+  SerialPrintln("");
 }
 
 void eprom_rd() 
 {
   byte VAL;
-  Serial.println();
+  SerialPrintln("");
   int a = inputString.toInt();
   VAL = EEPROM.read(a);
 
-  Serial.print("EEPROM Address: ");
-  Serial.print(a);
-  Serial.print("\t");
-  Serial.print("Value: ");
-  Serial.print(VAL);
-  Serial.println();
-  Serial.println();
+  SerialPrint("EEPROM Address: ");
+  SerialPrint(String(a));
+  SerialPrint("\t");
+  SerialPrint("Value: ");
+  SerialPrint(String(VAL));
+  SerialPrintln("");
+  SerialPrintln("");
 
   flag = 1;
 }
@@ -317,8 +321,8 @@ void eprom_rd()
 void eprom_routine() 
 {
   reset_serial_no_prompt();
-  Serial.println("");
-  Serial.write("EEPROM Address (0-4096 or all):");
+  SerialPrintln("");
+  SerialPrint("EEPROM Address (0-4096 or all):");
   inputString_module();
   inputString.toLowerCase();
 
@@ -336,17 +340,19 @@ void eprom_routine()
 
 void sysinfo() 
 {
-  Serial.println("");
-  Serial.println("System Information");
-  Serial.println("Software Firmware Version 1.0");
-  Serial.print("Baud Rate Set to: "); Serial.println(baud);
-  Serial.println("");
+  SerialPrintln("");
+  SerialPrintln("System Information");
+  SerialPrintln("Software Firmware Version 1.0");
+  SerialPrint("Baud Rate Set to: "); 
+  SerialPrintln(String(baud));
+  SerialPrintln("");
   flag = 1;
 }
 
 void serial_commands() 
 {
   inputString.toLowerCase();
+  inputString.trim();
   flag = 0;
 
   if (inputString == "?") { serial_menu(); }
@@ -361,7 +367,7 @@ void serial_commands()
   if (inputString == "si") { sysinfo(); }
   if (inputString == "") { flag = 1; }
 
-  if (flag == 0) { Serial.println("Invalid Command"); }
+  if (flag == 0) { SerialPrintln("Invalid Command"); }
 }
 
 void USB() 
@@ -398,16 +404,16 @@ void setup()
 
   if (WiFi.waitForConnectResult() != WL_CONNECTED) 
   {
-    Serial.println("WiFi Failed!");
+    SerialPrintln("WiFi Failed!");
     return;
   }
 
-  Serial.print("IP Address: ");
+  SerialPrint("IP Address: ");
   Serial.printf("%s", WiFi.localIP().toString().c_str());
 
   server.on("/", HTTP_GET, [](AsyncWebServerRequest *request) 
   {
-    request->send(200, "text/plain", "Hi! This is WebSerial demo. You can access webserial interface at http://" + WiFi.localIP().toString() + "/webserial");
+    request->send(200, "text/plain", "Access webserial interface at http://" + WiFi.localIP().toString() + "/webserial");
   });
 
   WebSerial.begin(&server);
@@ -419,22 +425,24 @@ void setup()
     inputString = String((char*)data);
     stringComplete = true;
     serial_commands();
-    Serial.println("");
-    WebSerial.println("Received Data...");
+    reset_serial();
+    //SerialPrintln("");
+    //WebSerial.println("Received Data...");
     String d = "";
     for (size_t i = 0; i < len; i++) 
     {
       d += char(data[i]);
     }
-    WebSerial.println(d);
+    //WebSerial.println(d);
   });
 
   server.begin();
   spaces();
-  Serial.println("AOS Serial Interface");
-  Serial.print("Baud Rate Set to:"); Serial.println(baud);
+  SerialPrintln("AOS Serial Interface");
+  SerialPrint("Baud Rate Set to:"); 
+  SerialPrintln(String(baud));
   serial_menu();
-  Serial.print(prompt);
+  SerialPrint(prompt);
 }
 
 void loop() 
