@@ -1,0 +1,22 @@
+{
+	"folders": [
+		{
+			"path": "../.vscode"
+		},
+		{
+			"path": "../include"
+		},
+		{
+			"path": "../lib"
+		},
+		{
+			"path": "."
+		},
+		{
+			"path": "../test"
+		},
+		{
+			"path": "../.pio"
+		}
+	]
+}
