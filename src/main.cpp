@@ -81,22 +81,23 @@ void serial_accum()
 
   if (inChar == 8 && inputString.length() > 0) 
   {
-    SerialWrite(inChar);
-    SerialPrint(" ");
-    SerialWrite(8);
+    Serial.write(inChar);
+    Serial.write(" ");
+    Serial.write(8);
     inputString = inputString.substring(0, inputString.length() - 1);
   }
 
   if (inChar == 13) 
   {
-    SerialWrite(inChar);
-    SerialWrite(char(10));
+    Serial.write(inChar);
+    Serial.write(char(10));
+    WebSerial.println(inputString);
     stringComplete = true;
   }
 
   if (inChar != 13 && inChar != 8) 
   {
-    SerialWrite(inChar);
+    Serial.write(inChar);
     inputString += inChar;
   }
 }
@@ -433,20 +434,10 @@ void setup()
 
   WebSerial.onMessage([&](uint8_t *data, size_t len) 
   {
-    //Serial.printf("Received %u bytes from WebSerial: ", len);
-    //Serial.write(data, len);
     inputString = String((char*)data);
     stringComplete = true;
     serial_commands();
     reset_serial();
-    //SerialPrintln("");
-    //WebSerial.println("Received Data...");
-    //String d = "";
-    //for (size_t i = 0; i < len; i++) 
-    //{
-      //d += char(data[i]);
-    //}
-    //WebSerial.println(d);
   });
 
   server.begin();
@@ -461,5 +452,5 @@ void setup()
 void loop() 
 {
   USB();
-  //WebSerial.loop();
+  WebSerial.loop();
 }

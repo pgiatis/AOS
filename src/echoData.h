@@ -3,19 +3,49 @@
 
 #include <WebSerial.h>
 
-void echoToWebSerialLn(const String &message);
-void echoToWebSerialLn(const char *message);
-void echoToWebSerialLn(int num);
-void echoToWebSeriaLn(float num);
-void echoToWebSerial(const char *message);
-void echoToWebSerial(char c);
-void echoToWebSerial(byte b);
-void echoToWebSerial(const String &message); 
-void SerialPrintln(String message);
-void SerialPrintln();
-void SerialWrite(byte message);
-void SerialWrite();
-void SerialPrint(String message);
-void SerialPrint();
+template <typename T>
+inline void SerialPrint(T data) 
+{
+    String message = String(data);
+    WebSerial.print(message);
+    Serial.print(message);
+}
+
+inline void SerialPrint() 
+{
+    String message = "";
+    WebSerial.print(message);
+    Serial.print(message);
+}
+
+template <typename T>
+inline void SerialPrintln(T data) 
+{
+    String message = String(data);
+    WebSerial.println(message);
+    Serial.println(message);
+}
+
+inline void SerialPrintln() 
+{
+    String message = "";
+    WebSerial.println(message);
+    Serial.println(message);
+}
+
+template <typename T>
+inline void SerialWrite(T data) 
+{
+    uint8_t message = static_cast<uint8_t>(data);
+    WebSerial.write(message);
+    Serial.write(message);
+}
+
+inline void SerialWrite() 
+{
+    String message = "";
+    WebSerial.print(message);
+    Serial.write(message.c_str());
+}
 
 #endif // ECHODATA_H
