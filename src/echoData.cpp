@@ -1,14 +1,32 @@
 #include "echoData.h"
 
-void echoToWebSerial(const String &message) 
+void echoToWebSerialLn(const String &message) 
 {
   WebSerial.println(message);
 }
 
 // Overload for char array
-void echoToWebSerial(const char *message) 
+void echoToWebSerialLn(const char *message) 
 {
   WebSerial.println(message);
+}
+
+// Overload for integer
+void echoToWebSerialLn(int num) 
+{
+  WebSerial.println(num);
+}
+
+// Overload for float
+void echoToWebSeriaLn(float num) 
+{
+  WebSerial.println(num);
+}
+
+// Overload for char array
+void echoToWebSerial(const char *message) 
+{
+  WebSerial.print(message);
 }
 
 // Overload for single character
@@ -23,21 +41,21 @@ void echoToWebSerial(byte b)
   WebSerial.print(b);
 }
 
-// Overload for integer
-void echoToWebSerial(int num) 
+void echoToWebSerial(const String &message) 
 {
-  WebSerial.println(num);
-}
-
-// Overload for float
-void echoToWebSerial(float num) 
-{
-  WebSerial.println(num);
+  WebSerial.print(message);
 }
 
 void SerialPrintln(String message) 
 {
-  echoToWebSerial(message);
+  echoToWebSerialLn(message);
+  Serial.println(message);
+}
+
+void SerialPrintln() 
+{
+  String message = "";
+  echoToWebSerialLn(message);
   Serial.println(message);
 }
 
@@ -47,8 +65,22 @@ void SerialWrite(byte message)
   Serial.write(message);
 }
 
+void SerialWrite() 
+{
+  String message = "";
+  echoToWebSerial(message);
+  Serial.write(message.c_str());
+}
+
 void SerialPrint(String message) 
 {
+  echoToWebSerial(message);
+  Serial.print(message);
+}
+
+void SerialPrint() 
+{
+  String message = "";
   echoToWebSerial(message);
   Serial.print(message);
 }
