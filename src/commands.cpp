@@ -1,6 +1,7 @@
 #include "commands.h"
 #include "globals.h"
 
+// Displays the serial menu with available commands
 void serial_menu() 
 {
   spaces(1);
@@ -21,6 +22,7 @@ void serial_menu()
   flag = 1;
 }
 
+// Reads the state of a specified pin
 void read_pin() 
 {
     byte done = 0;
@@ -35,6 +37,7 @@ void read_pin()
     flag = 1;
 }
 
+// Reads the value of a specified ADC channel and converts it to voltage
 void read_adc() 
 {
     byte done = 0;
@@ -51,6 +54,7 @@ void read_adc()
     flag = 1;
 }
 
+// Sets the PWM duty cycle for a specified pin
 void pwm_pin() 
 {
     byte pin = 0;
@@ -75,6 +79,7 @@ void pwm_pin()
     flag = 1;
 }
 
+// Toggles the state of a specified pin
 void toggle_pin() 
 {
     byte pin = 0;
@@ -99,6 +104,7 @@ void toggle_pin()
     flag = 1;
 }
 
+// Sets the baud rate for serial communication
 void set_baud() 
 {
     byte check = 0;
@@ -147,6 +153,7 @@ void set_baud()
   flag = 1;
 }
 
+// Writes a value to a specified EEPROM address
 void write_eprom() 
 {
     int ADDRESS = 0;
@@ -171,6 +178,7 @@ void write_eprom()
     flag = 1;
 }
 
+// Reads all values from EEPROM and prints them
 void eprom_all() 
 {
     Serial.println(); Serial.println("Reading ALL");
@@ -184,6 +192,7 @@ void eprom_all()
   Serial.println();
 }
 
+// Reads a value from a specified EEPROM address
 void eprom_rd() 
 {
     byte VAL;
@@ -202,6 +211,7 @@ void eprom_rd()
   flag = 1;
 }
 
+// Handles EEPROM read commands, either a specific address or all addresses
 void eprom_routine() 
 {
     reset_serial_no_prompt();
@@ -222,6 +232,7 @@ void eprom_routine()
     flag = 1;
 }
 
+// Displays system information
 void sysinfo() 
 {
     Serial.println("");
@@ -232,22 +243,24 @@ void sysinfo()
     flag = 1;
 }
 
+// Processes serial commands and executes the corresponding functions
 void serial_commands() 
 {
     inputString.toLowerCase();
+    inputString.trim();
     flag = 0;
   
-    if (inputString == "?") { serial_menu(); }
+    if (inputString == "?") { serial_menu(); command_message ="Serial Menu"; change = true;}
     if (inputString == "reset") { softReset(); }
-    if (inputString == "re") { eprom_routine(); }
-    if (inputString == "we") { write_eprom(); }
-    if (inputString == "sb") { set_baud(); }
-    if (inputString == "tp") { toggle_pin(); }
-    if (inputString == "pwm") { pwm_pin(); }
-    if (inputString == "ra") { read_adc(); }
-    if (inputString == "rp") { read_pin(); }
-    if (inputString == "si") { sysinfo(); }
+    if (inputString == "re") { eprom_routine(); command_message ="Read EEPROM"; change = true;}
+    if (inputString == "we") { write_eprom(); command_message ="Write EEPROM"; change = true;}
+    if (inputString == "sb") { set_baud(); command_message ="Set Baud"; change = true;}
+    if (inputString == "tp") { toggle_pin(); command_message ="Toggle Pin"; change = true;}
+    if (inputString == "pwm") { pwm_pin(); command_message ="PWM Pin"; change = true;}
+    if (inputString == "ra") { read_adc(); command_message ="Read ADC"; change = true;}
+    if (inputString == "rp") { read_pin(); command_message = "Read Pin"; change = true;}
+    if (inputString == "si") { sysinfo(); command_message ="System Information"; change = true;}
     if (inputString == "") { flag = 1; }
   
-    if (flag == 0) { Serial.println("Invalid Command"); }
+    if (flag == 0) { Serial.println("Invalid Command");command_message ="Invalid Command"; change = true; }
 }

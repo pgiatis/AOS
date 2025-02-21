@@ -9,10 +9,14 @@ extern const char* mqtt_server;
 extern WiFiClient espClient;
 extern PubSubClient client;
 
+String getMacAddress();
 void setup_wifi();
+void messageReceived(String &topic, String &payload);
+void mqttConnect();
+void mqttService();
+void SendInfoCallback();
+void SendInfoMQTT();
 void callback(char* topic, byte* payload, unsigned int length);
-void reconnect();
-void mqtt_loop();
 
 
 #endif // WIFI_MQTT_H

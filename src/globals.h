@@ -13,6 +13,7 @@
 #include "commands.h"
 #include "USB.h"
 #include "Wifi_MQTT.h" 
+#include <ArduinoJson.h>
 
 extern const char* ssid;
 extern const char* password;
@@ -22,6 +23,8 @@ extern WiFiClient espClient;
 extern PubSubClient client;
 extern unsigned long lastMsg;
 #define MSG_BUFFER_SIZE (50)
+#define MQTT_PORT 1883
+
 extern char msg[MSG_BUFFER_SIZE];
 extern int value;
 
@@ -33,8 +36,11 @@ extern int inByte;
 
 extern String inputString;
 extern String prompt;
+extern String command_message;
 
 extern boolean stringComplete;
+
+extern boolean change;
 
 extern byte flag;
 extern byte done;
@@ -44,8 +50,6 @@ extern byte valid;
 //function prototypes
 void setup_wifi();
 void callback(char* topic, byte* payload, unsigned int length);
-void reconnect();
-void mqtt_loop();
 void USB();
 void inputString_module();
 void reset_serial_no_prompt();
@@ -64,5 +68,12 @@ void eprom_rd();
 void eprom_routine();
 void sysinfo();
 void serial_commands();
+String getMacAddress();
+void messageReceived(String &topic, String &payload);
+void mqttConnect();
+void mqttService();
+void SendInfoCallback();
+void SendInfoMQTT();
+
 
 #endif // GLOBALS_H

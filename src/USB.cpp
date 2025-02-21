@@ -1,6 +1,7 @@
 #include "USB.h"
 #include "globals.h"
 
+// Main USB function to handle serial input and commands
 void USB() 
 {
   while (Serial.available() > 0) 
@@ -15,6 +16,7 @@ void USB()
   }
 }
 
+// Accumulates characters from the serial input into a string
 void serial_accum() 
 {
   char inChar = (char)Serial.read();
@@ -40,6 +42,7 @@ void serial_accum()
   }
 }
 
+// Resets the serial input string and prints the prompt
 void reset_serial() 
 {
   inputString = "";
@@ -47,12 +50,14 @@ void reset_serial()
   stringComplete = false;
 }
 
+// Resets the serial input string without printing the prompt
 void reset_serial_no_prompt() 
 {
   inputString = "";
   stringComplete = false;
 }
 
+// Handles input string accumulation in a module until completion
 void inputString_module() 
 {
   done = 0;
@@ -71,6 +76,7 @@ void inputString_module()
   }
 }
 
+// Prints a specified number of newline characters
 void spaces(int num) 
 {
     for (int i = 0; i< num; i++)

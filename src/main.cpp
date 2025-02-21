@@ -30,13 +30,20 @@ void setup()
     case 6: baud = 19200; break;
     case 7: baud = 38400; break;
     case 8: baud = 115200; break;
-    default: baud = 9600; EEPROM.write(1, 4);
+    default: baud = 9600; EEPROM.write(1, 8);
   }
+
   baud = 115200;
+
   Serial.begin(baud);
+
   setup_wifi();
-  client.setServer(mqtt_server, 1883);
+
+  client.setServer(mqtt_server, MQTT_PORT);
+
   client.setCallback(callback);
+
+  mqttConnect();
 
   spaces(1);
   Serial.println("AOS Serial Interface");
@@ -48,5 +55,5 @@ void setup()
 void loop() 
 {
   USB(); // Use the USB function from the new library
-  mqtt_loop();
+  mqttService();                                                              // Handle MQTT data
 }
